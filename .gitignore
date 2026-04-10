@@ -1,0 +1,25 @@
+# Environments
+.env
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Chrome Profiles
+Colab_Chrome_Profile/
+
+# Test output
+test_dump.txt
+test_output.json
+*.processed
+
+# IDEs and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
