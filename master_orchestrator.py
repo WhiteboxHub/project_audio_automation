@@ -183,7 +183,7 @@ def run_browser_bot():
 
 def process_single_run():
     print("===========================================")
-    print("   🤖 Orchestrator (Single Run Mode)      ")
+    print("      Orchestrator (Single Run Mode)      ")
     print("===========================================")
     
     # 1. CLEANUP PREVIOUS RUN
