@@ -85,7 +85,7 @@ def fetch_pending_interviews(token):
         try:
             date_part = i_date_str.split('T')[0]
             i_date = datetime.fromisoformat(date_part)
-            cutoff_date = datetime(2026, 3, 30)
+            cutoff_date = datetime(2026, 2, 1)
             
             if i_date >= cutoff_date and not audio_link and recording_link:
                 video_id = extract_google_drive_id(recording_link)
