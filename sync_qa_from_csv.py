@@ -9,6 +9,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
+
 # Scope for Drive API (same as qa_generator.py)
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
