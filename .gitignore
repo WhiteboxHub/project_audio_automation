@@ -23,3 +23,5 @@ test_output.json
 .idea/
 .DS_Store
 Thumbs.db
+token.json
+credentials.json

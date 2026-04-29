@@ -61,8 +61,7 @@ def fetch_interviews(token):
 def fetch_api_keys(token):
     """Fetch candidate API keys from the backend."""
     headers = {"Authorization": f"Bearer {token}"} if token else {}
-    # Assuming there's an endpoint to get the keys based on the schema you provided
-    keys_url = f"{WBL_API_BASE_URL}/candidate-api-keys" 
+    keys_url = f"{WBL_API_BASE_URL}/candidates/credentials?limit=100" 
     print("Fetching API keys for round robin...")
     
     try:
@@ -70,12 +69,16 @@ def fetch_api_keys(token):
         response.raise_for_status()
         data_payload = response.json()
         
-        # Extract just the string keys from the payload
+        # Extract key info from the payload
         keys_list = []
         data = data_payload.get("data", data_payload) if isinstance(data_payload, dict) else data_payload
         for item in data:
             if isinstance(item, dict) and "api_key" in item:
-                keys_list.append(item["api_key"])
+                keys_list.append({
+                    "api_key": item["api_key"],
+                    "provider_name": item.get("provider_name", "openai").lower(),
+                    "model_name": item.get("model_name", "gpt-4o-mini")
+                })
                 
         return keys_list
     except Exception as e:
@@ -128,29 +131,11 @@ def download_transcript(transcript_link):
         print("Ensure 'credentials.json' exists in this folder and your Google account has access to the file.")
         return None
 
-def chunk_text(text, chunk_words=6000, overlap_words=500):
-    """Split text into chunks with a specific word count and overlap to preserve context."""
-    words = text.split()
-    chunks = []
-    i = 0
-    while i < len(words):
-        chunk = " ".join(words[i:i + chunk_words])
-        chunks.append(chunk)
-        # Advance by chunk size minus overlap to create the sliding window
-        i += (chunk_words - overlap_words)
-        
-        if chunk_words - overlap_words <= 0:
-            break
-            
-    return chunks
-
-    return chunks
-
-def generate_qa_with_llm(transcript_text, api_key):
-    """Send the transcript to the LLM to generate Q&A in chunks, using the provided API key."""
-    print("Generating Q&A with LLM...")
+def generate_qa_with_llm(transcript_text, key_info):
+    """Send the entire transcript to the LLM to generate Q&A in one shot, using the provided API key info."""
+    print(f"Generating Q&A with LLM ({key_info['provider_name']})...")
     
-    # Isolate the transcript part if it has "Transcript" keyword (similar to your App Script logic)
+    # Isolate the transcript part if it has "Transcript" keyword
     transcript = transcript_text.split("Transcript")[1] if "Transcript" in transcript_text else transcript_text
     
     system_prompt = """You are an AI assistant that converts raw interview transcripts into high-quality interview preparation questions.
@@ -169,7 +154,7 @@ Rules:
 8. Keep questions concise but complete (no unnecessary verbosity).
 9. Maintain a logical flow from: high-level → detailed → system design → behavioral.
 10. Do not include answers, explanations, or commentary.
-11. If there are NO valid questions in this segment, respond with exactly: NO_QUESTIONS_FOUND
+11. If there are NO valid questions in this transcript, respond with exactly: NO_QUESTIONS_FOUND
 
 Output Format:
 <question>
@@ -177,46 +162,111 @@ Output Format:
 
 (one per line, no labels, no extra text)"""
 
-    chunks = chunk_text(transcript, chunk_words=6000, overlap_words=500)
-    all_qa = []
+    api_key = key_info["api_key"].strip()
+    provider = key_info["provider_name"].strip().lower()
+    # Ensure model doesn't have trailing spaces which cause 404 errors in some APIs
+    model = key_info["model_name"].strip() if key_info["model_name"] else ""
     
-    for i, chunk in enumerate(chunks):
-        print(f"Processing chunk {i+1}/{len(chunks)}...")
-        
-        payload = {
-            "model": "qwen3-8b", 
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Here is the transcript segment:\n\n{chunk}"}
-            ],
-            "temperature": 0.1, # Lower temperature for strict formatting and extraction
-            "max_tokens": 2048
-        }
-        
-        try:
-            # We add the Authorization header using the rotated API key
+    try:
+        ai_output = ""
+        if provider == "openai":
+            url = "https://api.openai.com/v1/chat/completions"
+            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+            
+            def make_openai_request(target_model):
+                payload = {
+                    "model": target_model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": f"Here is the full interview transcript:\n\n{transcript}"}
+                    ],
+                    "temperature": 0.1
+                }
+                return requests.post(url, json=payload, headers=headers)
+                
+            res = make_openai_request(model or "gpt-4o")
+            
+            # Handle fake models in database (like GPT-5.3) by retrying with gpt-4o-mini
+            if res.status_code == 404:
+                error_data = res.json()
+                if error_data.get("error", {}).get("code") == "model_not_found":
+                    print(f"Warning: Model '{model}' not found. Retrying with 'gpt-4o-mini'...")
+                    res = make_openai_request("gpt-4o-mini")
+            
+            if not res.ok:
+                print(f"OpenAI Error: {res.text}")
+            res.raise_for_status()
+            ai_output = res.json()["choices"][0]["message"]["content"].strip()
+            
+        elif provider in ["claude", "anthropic"]:
+            url = "https://api.anthropic.com/v1/messages"
             headers = {
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
+                "x-api-key": api_key, 
+                "anthropic-version": "2023-06-01", 
+                "content-type": "application/json"
             }
+            payload = {
+                "model": model or "claude-3-5-sonnet-20240620",
+                "max_tokens": 4096,
+                "system": system_prompt,
+                "messages": [
+                    {"role": "user", "content": f"Here is the full interview transcript:\n\n{transcript}"}
+                ],
+                "temperature": 0.1
+            }
+            res = requests.post(url, json=payload, headers=headers)
+            if not res.ok:
+                print(f"Anthropic Error: {res.text}")
+            res.raise_for_status()
+            ai_output = res.json()["content"][0]["text"].strip()
             
-            response = requests.post(LM_STUDIO_URL, json=payload, headers=headers)
-            response.raise_for_status()
-            data = response.json()
-            ai_output = data["choices"][0]["message"]["content"].strip()
+        elif provider in ["gemini", "google"]:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model or 'gemini-1.5-pro'}:generateContent?key={api_key}"
+            headers = {"Content-Type": "application/json"}
+            payload = {
+                "system_instruction": {
+                    "parts": [{"text": system_prompt}]
+                },
+                "contents": [{
+                    "parts": [{"text": f"Here is the full interview transcript:\n\n{transcript}"}]
+                }],
+                "generationConfig": {"temperature": 0.1}
+            }
+            res = requests.post(url, json=payload, headers=headers)
+            if not res.ok:
+                print(f"Gemini Error: {res.text}")
+            res.raise_for_status()
+            ai_output = res.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
             
-            # Remove <think> tags if the model outputs internal reasoning
-            ai_output = re.sub(r'<think>.*?</think>', '', ai_output, flags=re.DOTALL).strip()
-            
-            if ai_output and "NO_QUESTIONS_FOUND" not in ai_output:
-                all_qa.append(ai_output)
-        except Exception as e:
-            print(f"Local LLM API Error on chunk {i+1}: {e}")
-            
-    if not all_qa:
-        return "NO_QUESTIONS_FOUND"
+        else:
+            # Fallback to openai-compatible endpoint
+            url = "https://api.openai.com/v1/chat/completions" 
+            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+            payload = {
+                "model": model or "gpt-4o",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Here is the full interview transcript:\n\n{transcript}"}
+                ],
+                "temperature": 0.1
+            }
+            res = requests.post(url, json=payload, headers=headers)
+            if not res.ok:
+                print(f"Fallback Provider Error: {res.text}")
+            res.raise_for_status()
+            ai_output = res.json()["choices"][0]["message"]["content"].strip()
         
-    return "\n\n".join(all_qa)
+        # Remove <think> tags if the model outputs internal reasoning
+        ai_output = re.sub(r'<think>.*?</think>', '', ai_output, flags=re.DOTALL).strip()
+        
+        if ai_output and "NO_QUESTIONS_FOUND" not in ai_output:
+            return ai_output
+        else:
+            return "NO_QUESTIONS_FOUND"
+            
+    except Exception as e:
+        print(f"LLM API Error: {e}")
+        return "NO_QUESTIONS_FOUND"
 
 def update_interview_qa(token, row_id, qa_text):
     """Update the interview record in the database with the generated Q&A."""

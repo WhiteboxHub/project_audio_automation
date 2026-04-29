@@ -72,3 +72,32 @@ python master_orchestrator.py
 - If it finds interviews, it writes the queue, wakes up your Chrome profile to push "Run All" on Colab, and monitors the Drive folder.
 - Once Colab is finished (and deletes the pending file), the Orchestrator updates your database and waits again. 
 - If the system crashes mid-process, resetting the script automatically recovers where it left off.
+
+---
+
+## 🧠 Automated Q&A Generation Pipelines
+
+This project also includes tools to automatically generate Interview Preparation questions from Google Drive audio transcripts.
+
+### Option A: `qa_generator.py` (Dynamic LLM Generation)
+This script connects to your backend database, fetches candidate API keys, and uses cloud LLMs (OpenAI, Anthropic, or Gemini) in a round-robin rotation to read interview transcripts and generate high-quality interview questions.
+
+**Usage:**
+```bash
+python qa_generator.py
+```
+- Requires API keys to be populated in the `candidate_api_keys` database table.
+- Automatically handles Quota limits (429) and falls back to default models if an invalid model name is provided.
+
+### Option B: `sync_qa_from_csv.py` (Zero-Load Google Sheets Sync)
+If you already have pre-generated questions in a Google Sheet, you can use this script to map those questions directly to your database without querying an LLM or placing heavy load on the API.
+
+**Usage:**
+1. Export your Database `interviews` table to `interviews.csv` and place it in the folder.
+2. Run the script:
+   ```bash
+   python sync_qa_from_csv.py
+   ```
+- The script uses your Google Auth (`credentials.json`) to silently download the targeted Google Sheet in the background.
+- It finds exact matches between the Google Sheet links and your database transcript links.
+- It sends lightweight `PUT` requests to the server to push the matched Q&A data.
