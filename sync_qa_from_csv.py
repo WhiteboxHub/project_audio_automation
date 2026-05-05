@@ -160,18 +160,18 @@ def main():
         print("Error: API payload must contain 'id' and 'transcript' columns.")
         return
         
-    # 4. Clean up the link strings to ensure perfect matching
-    df_sheet['links'] = df_sheet['links'].astype(str).str.strip()
-    df_interviews['transcript'] = df_interviews['transcript'].astype(str).str.strip()
+    # 4. Clean up and extract Drive IDs for perfect matching
+    df_sheet['extracted_id'] = df_sheet['links'].astype(str).apply(extract_drive_id)
+    df_interviews['extracted_id'] = df_interviews['transcript'].astype(str).apply(extract_drive_id)
     
-    # Drop rows where links or transcript are missing
-    df_sheet = df_sheet.dropna(subset=['links', 'questions'])
-    df_interviews = df_interviews.dropna(subset=['id', 'transcript'])
+    # Drop rows where we couldn't extract an ID
+    df_sheet = df_sheet.dropna(subset=['extracted_id', 'questions'])
+    df_interviews = df_interviews.dropna(subset=['id', 'extracted_id'])
     
-    print(f"Found {len(df_sheet)} rows in Google Sheet, and {len(df_interviews)} rows from the API.")
+    print(f"Found {len(df_sheet)} rows with valid links in Google Sheet, and {len(df_interviews)} rows from the API.")
     
-    # 5. Merge DataFrames on the transcript link
-    merged_df = pd.merge(df_interviews, df_sheet, left_on='transcript', right_on='links', how='inner')
+    # 5. Merge DataFrames strictly on the extracted Drive ID
+    merged_df = pd.merge(df_interviews, df_sheet, on='extracted_id', how='inner')
     
     match_count = len(merged_df)
     print(f"\nFound {match_count} exact matches based on the transcript link!")
@@ -186,12 +186,18 @@ def main():
     for index, row in merged_df.iterrows():
         interview_id = int(row['id'])
         qa_text = str(row['questions'])
+        existing_qa = row.get('q_a')
         
+        # Only update if existing q_a is empty, null, or 'NO_QUESTIONS_FOUND'
+        if pd.notna(existing_qa) and str(existing_qa).strip() and str(existing_qa).strip() != "NO_QUESTIONS_FOUND":
+            print(f"⏩ Skipping Interview ID {interview_id}: Already contains valid Q&A data.")
+            continue
+            
         # Call API to update this specific row
         if update_interview_qa(token, interview_id, qa_text):
             success_count += 1
             
-    print(f"\n=== Sync Complete! Successfully updated {success_count}/{match_count} matches. ===")
+    print(f"\n=== Sync Complete! Successfully updated {success_count} matches. ===")
 
 if __name__ == "__main__":
     main()
