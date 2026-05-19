@@ -101,3 +101,23 @@ If you already have pre-generated questions in a Google Sheet, you can use this 
 - The script uses your Google Auth (`credentials.json`) to silently download the targeted Google Sheet in the background.
 - It finds exact matches between the Google Sheet links and your database transcript links.
 - It sends lightweight `PUT` requests to the server to push the matched Q&A data.
+
+
+find_missing_recordings.py
+this is created to pull the records of missing video links and creates a json
+
+sync_qa_from_csv.py
+this is used for syncing the google workspace created questions to the interview table coulmn q_a
+
+sync_qa_from_csv.py
+this is created for renaming the files names with a naming conevntions id_name_company_type_date
+
+scan_drive_ownership.py
+this is created to check the ownership of the files on the interview table
+
+take_ownership_colab.py
+this is the colab template used for the drive files ownership migration and the uploading too and updating the new link to the inetrveiw table too wbl screts are added to the colab secrets
+
+
+
+
