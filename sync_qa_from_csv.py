@@ -13,8 +13,19 @@ from googleapiclient.discovery import build
 # Scope for Drive API (same as qa_generator.py)
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
-# The specific Google Sheet provided
-GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1zGSD-AjirKUt0dMNHzm5KpBSZH3jXFJ3hTWIUcCTJcU/edit?usp=sharing"
+# Configuration for Multiple Google Sheets (Restricted or Shared)
+# Each sheet can have its own dedicated token file to support different Google Accounts!
+SHEETS_CONFIG = [
+    {
+        "url": "https://docs.google.com/spreadsheets/d/1zGSD-AjirKUt0dMNHzm5KpBSZH3jXFJ3hTWIUcCTJcU/edit?usp=sharing",
+        "token_file": "token.json"
+    },
+    # Add your new restricted sheet below:
+    {
+         "url": "https://docs.google.com/spreadsheets/d/1ADwB28tJTK18pHHAj2d3I9ahdIGK1MpHvQasolAyciY/edit?usp=sharingE",
+         "token_file": "token_2.json"
+    }
+]
 
 # Load Environment Variables from .env file
 load_dotenv()
@@ -86,22 +97,23 @@ def extract_drive_id(url):
     if match: return match.group(1)
     return None
 
-def get_drive_service():
+def get_drive_service(token_file):
     """Authenticate with Google Drive API and return the service object."""
     creds = None
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if os.path.exists(token_file):
+        creds = Credentials.from_authorized_user_file(token_file, SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+            print(f"\n🔐 Authentication required for {token_file}! Opening browser...")
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
+        with open(token_file, 'w') as token:
             token.write(creds.to_json())
     return build('drive', 'v3', credentials=creds)
 
-def download_sheet_as_df(sheet_url):
+def download_sheet_as_df(sheet_url, token_file):
     """Download Google Sheet as a CSV via Google Drive API and load into Pandas."""
     file_id = extract_drive_id(sheet_url)
     if not file_id:
@@ -109,7 +121,7 @@ def download_sheet_as_df(sheet_url):
         return None
 
     try:
-        service = get_drive_service()
+        service = get_drive_service(token_file)
         print(f"Downloading Google Sheet (ID: {file_id}) via Drive API...")
         
         # Export the Google Sheet as CSV
@@ -141,37 +153,43 @@ def main():
     # Convert API data to Pandas DataFrame
     df_interviews = pd.DataFrame(interviews_data)
     
-    # 3. Download Google Sheet dynamically
-    df_sheet = download_sheet_as_df(GOOGLE_SHEET_URL)
-    if df_sheet is None:
-        print("Failed to download Google Sheet. Exiting.")
+    # 3. Download Google Sheets dynamically
+    all_sheets_dfs = []
+    for config in SHEETS_CONFIG:
+        print(f"\nProcessing Sheet: {config['url']}")
+        df_sheet = download_sheet_as_df(config["url"], config["token_file"])
+        if df_sheet is not None:
+            # Clean column names just in case there are trailing spaces
+            df_sheet.columns = df_sheet.columns.str.strip().str.lower()
+            if 'links' in df_sheet.columns and 'questions' in df_sheet.columns:
+                all_sheets_dfs.append(df_sheet)
+            else:
+                print(f"⚠️ Error: Sheet {config['url']} missing 'links' or 'questions' column.")
+                
+    if not all_sheets_dfs:
+        print("Failed to download any valid Google Sheets. Exiting.")
         return
         
-    # Clean column names just in case there are trailing spaces
-    df_sheet.columns = df_sheet.columns.str.strip().str.lower()
+    df_sheet_combined = pd.concat(all_sheets_dfs, ignore_index=True)
     df_interviews.columns = df_interviews.columns.str.strip().str.lower()
     
-    # Ensure required columns exist
-    if 'links' not in df_sheet.columns or 'questions' not in df_sheet.columns:
-        print("Error: Google Sheet must contain 'links' and 'questions' columns.")
-        return
-        
     if 'id' not in df_interviews.columns or 'transcript' not in df_interviews.columns:
         print("Error: API payload must contain 'id' and 'transcript' columns.")
         return
         
     # 4. Clean up and extract Drive IDs for perfect matching
-    df_sheet['extracted_id'] = df_sheet['links'].astype(str).apply(extract_drive_id)
+    df_sheet_combined['extracted_id'] = df_sheet_combined['links'].astype(str).apply(extract_drive_id)
     df_interviews['extracted_id'] = df_interviews['transcript'].astype(str).apply(extract_drive_id)
     
     # Drop rows where we couldn't extract an ID
-    df_sheet = df_sheet.dropna(subset=['extracted_id', 'questions'])
+    df_sheet_combined = df_sheet_combined.dropna(subset=['extracted_id', 'questions'])
     df_interviews = df_interviews.dropna(subset=['id', 'extracted_id'])
     
-    print(f"Found {len(df_sheet)} rows with valid links in Google Sheet, and {len(df_interviews)} rows from the API.")
+    print(f"\nFound {len(df_sheet_combined)} total rows with valid links across all Google Sheets.")
+    print(f"Found {len(df_interviews)} rows from the API.")
     
     # 5. Merge DataFrames strictly on the extracted Drive ID
-    merged_df = pd.merge(df_interviews, df_sheet, on='extracted_id', how='inner')
+    merged_df = pd.merge(df_interviews, df_sheet_combined, on='extracted_id', how='inner')
     
     match_count = len(merged_df)
     print(f"\nFound {match_count} exact matches based on the transcript link!")

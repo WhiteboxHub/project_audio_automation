@@ -58,7 +58,7 @@ Fill out your `.env` file with the exact paths:
 
 ---
 
-## 🏃 Step 5: Running the Orchestrator
+##  Step 5: Running the Orchestrator
 
 Run the master script:
 
@@ -73,51 +73,38 @@ python master_orchestrator.py
 - Once Colab is finished (and deletes the pending file), the Orchestrator updates your database and waits again. 
 - If the system crashes mid-process, resetting the script automatically recovers where it left off.
 
----
-
-## 🧠 Automated Q&A Generation Pipelines
-
-This project also includes tools to automatically generate Interview Preparation questions from Google Drive audio transcripts.
-
-### Option A: `qa_generator.py` (Dynamic LLM Generation)
-This script connects to your backend database, fetches candidate API keys, and uses cloud LLMs (OpenAI, Anthropic, or Gemini) in a round-robin rotation to read interview transcripts and generate high-quality interview questions.
-
-**Usage:**
-```bash
-python qa_generator.py
-```
-- Requires API keys to be populated in the `candidate_api_keys` database table.
-- Automatically handles Quota limits (429) and falls back to default models if an invalid model name is provided.
-
-### Option B: `sync_qa_from_csv.py` (Zero-Load Google Sheets Sync)
-If you already have pre-generated questions in a Google Sheet, you can use this script to map those questions directly to your database without querying an LLM or placing heavy load on the API.
-
-**Usage:**
-1. Export your Database `interviews` table to `interviews.csv` and place it in the folder.
-2. Run the script:
-   ```bash
-   python sync_qa_from_csv.py
-   ```
-- The script uses your Google Auth (`credentials.json`) to silently download the targeted Google Sheet in the background.
-- It finds exact matches between the Google Sheet links and your database transcript links.
-- It sends lightweight `PUT` requests to the server to push the matched Q&A data.
-
+--------------------------------------------------------------------------------------------------------------------
+These below scripts work with Google Drive API add the below secret folder in root folder
+- credentials.json
 
 find_missing_recordings.py
 this is created to pull the records of missing video links and creates a json
+- this uses .env for wbl api access
 
 sync_qa_from_csv.py
 this is used for syncing the google workspace created questions to the interview table coulmn q_a
-
-sync_qa_from_csv.py
-this is created for renaming the files names with a naming conevntions id_name_company_type_date
+to use this we need 
+- token.json
+- token_2.json
 
 scan_drive_ownership.py
 this is created to check the ownership of the files on the interview table
+- token.json
 
 take_ownership_colab.py
-this is the colab template used for the drive files ownership migration and the uploading too and updating the new link to the inetrveiw table too wbl screts are added to the colab secrets
+this is the colab template used for the drive files ownership migration and the uploading too and updating the new link to the inetrveiw table too wbl serets are added to the colab secrets
+- this works on pasting and running it on  colab it ask for drive authentication in run time
+- WBL_EMAIL
+- WBL_PASSWORD
+this need to be added in colab secrets
 
+rename_drive_files.py
+this pull the links of drive files video,transcript,audio files and renames it with a proper naming convention
+ex: id_name_company_type_date
+- token_full_drive.json
 
+send_missing_records_report.py
+this is to pull the records and send the missing records based on the currrent day,last 7 days,last 30 days
+- this uses .env
 
 

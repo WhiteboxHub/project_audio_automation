@@ -146,12 +146,19 @@ def main():
             continue
             
         interview_id = row.get('id')
-        transcript_url = row.get('transcript')
-        
+        transcript = row.get('transcript')
+        company = row.get('company')
+        mode_of_interview = row.get('mode_of_interview')
+        interview_date = row.get('interview_date')
+        type_of_interview = row.get('type_of_interview')
         # Add to Q&A results
         qa_results.append({
             "interview_id": interview_id,
-            "q_a_text": qa_text
+            "q_a_text": qa_text,
+            "company": company,
+            "mode_of_interview": mode_of_interview,
+            "interview_date": interview_date,
+            "type_of_interview": type_of_interview
         })
         
         # Check for and skip OneDrive/SharePoint links for transcripts

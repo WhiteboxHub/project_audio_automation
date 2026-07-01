@@ -72,13 +72,13 @@ def main():
         return
         
     # Filter the API dataframe to just what we need to merge
-    df_api = df_api[['id', 'type_of_interview']]
+    df_api = df_api[['id', 'type_of_interview', 'company', 'mode_of_interview', 'interview_date']]
     
     # Rename 'id' to 'interview_id' so it matches the transcripts file column exactly
-    df_api.rename(columns={'id': 'interview_id'}, inplace=True)
+    df_api.rename(columns={'id': 'interview_id', 'type_of_interview': 'type_of_interview', 'company': 'company', 'mode_of_interview': 'mode_of_interview', 'interview_date': 'interview_date'}, inplace=True)
     
     # 4. Load the transcripts JSON file
-    transcripts_file = "transcripts_dump.json"
+    transcripts_file = "questions_dump.json"
     if not os.path.exists(transcripts_file):
         print(f"File {transcripts_file} not found. Exiting.")
         return
@@ -96,8 +96,8 @@ def main():
     df_enriched['type_of_interview'].fillna('Recruiter Call', inplace=True)
     
     # 6. Save the enriched dataset
-    output_json = "transcripts_enriched.json"
-    output_csv = "transcripts_enriched.csv"
+    output_json = "questions_enriched.json"
+    output_csv = "questions_enriched.csv"
     
     print(f"Saving enriched data to {output_json} and {output_csv}...")
     

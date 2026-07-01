@@ -1,6 +1,7 @@
 import os
 import re
 import requests
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 from google.oauth2.credentials import Credentials
@@ -8,8 +9,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
-# We MUST use the full drive scope to rename files. 
-# Readonly scope will cause a 403 Forbidden error.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 # Load Environment Variables from .env file
@@ -145,9 +144,19 @@ def main():
         return
 
     # 3. Iterate over the interviews
-    print(f"\nProcessing {len(interviews)} records for renaming...\n")
+    today = datetime.today()
+    cutoff_date = today - timedelta(days=7)
+    cutoff_date_str = cutoff_date.strftime('%Y-%m-%d')
+    print(f"\nProcessing records for renaming (Filtered for the last 7 days: >= {cutoff_date_str})...\n")
     
     for row in interviews:
+        # Filter for the last 7 days
+        raw_date = str(row.get('interview_date', ''))
+        interview_date = raw_date.split('T')[0] if raw_date else "Unknown"
+        
+        if interview_date == "Unknown" or interview_date < cutoff_date_str:
+            continue
+            
         interview_id = str(row.get('id', ''))
         
         candidate = row.get('candidate') or {}
@@ -155,7 +164,6 @@ def main():
         
         interview_type = row.get('type_of_interview', 'Unknown')
         company_name = row.get('company', 'Unknown')
-        interview_date = row.get('interview_date', 'Unknown')
         mode_of_interview = row.get('mode_of_interview', 'Unknown')
         
         # Build the exact naming convention string
@@ -167,11 +175,13 @@ def main():
         
         audio_link = row.get('audio_link')
         recording_link = row.get('recording_link')
+        transcript_link = row.get('transcript')
         
         audio_id = extract_drive_id(audio_link)
         recording_id = extract_drive_id(recording_link)
+        transcript_id = extract_drive_id(transcript_link)
         
-        if not audio_id and not recording_id:
+        if not audio_id and not recording_id and not transcript_id:
             continue
             
         print(f"Row {interview_id}: {candidate_name}")
@@ -181,6 +191,9 @@ def main():
             
         if recording_id:
             rename_file_on_drive(drive_service, recording_id, safe_base_name, "Video")
+            
+        if transcript_id:
+            rename_file_on_drive(drive_service, transcript_id, safe_base_name, "Transcript")
 
     print("\n=== All Renaming Complete! ===")
 

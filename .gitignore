@@ -8,39 +8,11 @@ ENV/
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-
-# Chrome Profiles
-Colab_Chrome_Profile/
-
-# Test output
-test_dump.txt
-test_output.json
-*.processed
-
-# IDEs and OS
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-token.json
-credentials.json
-*.json
-*.csv
-*.log
-*.bak
-*.tmp
-*.swp
-*.swo
-*.zip
-*.tar.gz
-*.egg-info/
-dist/
-build/
 *.egg
 *.log
 *.bak
 *.tmp
 *.swp
 *.swo
-*.zip
+*.pdf
+*.json

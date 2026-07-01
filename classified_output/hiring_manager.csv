@@ -1,0 +1,76 @@
+question_text,category,score,confidence
+Can you talk to me about your style of stakeholder management and any technical challenges you've solved in that front?,hiring_manager,0.7073,medium
+"How would you handle a scenario where your stakeholder doesn't have the scope and needs your help in identifying that scope, that use case, for agentic development?",hiring_manager,0.5857,medium
+Let's talk about your project and what work you did recently in detail.,hiring_manager,0.5451,low
+I should talk about four distinct goals. I want your opinion on your view. So where do you see yourself orient business and fourth is engineer like hands on.,hiring_manager,0.507,low
+"How do you organize and prioritize your time when you have competing priorities, and how do you communicate that to the stakeholders?",hiring_manager,0.6177,medium
+What was your role and contribution in your most recent project?,hiring_manager,0.6004,medium
+What kind of leadership or mentoring experience do you have in your projects?,hiring_manager,0.5309,low
+How do you prioritize tasks and manage deadlines effectively?,hiring_manager,0.5381,low
+How would you describe your communication style in a team setting?,hiring_manager,0.5277,low
+"What qualities do you believe are essential for solving unfamiliar technical problems, and how do you approach such challenges?",hiring_manager,0.5582,medium
+"What questions do you have about the team structure, role expectations, and interview process?",hiring_manager,0.4763,low
+"Describe your experience working with cross-functional teams and how you ensured alignment across teams with different priorities.Explain a situation where you had to justify a technical decision (e.g., choosing a vector database) to another team and how you approached it.How did you collaborate with domain teams (e.g., customer support) to build datasets and improve system performance?",hiring_manager,0.5481,low
+Describe a time when you took full ownership of a project end-to-end and how you managed technical and product decisions.How did you handle situations where you were blocked by another team and unable to get required inputs?,hiring_manager,0.5356,low
+Describe a situation where you worked with cross-functional teams and how you ensured alignment across teams.How did you handle situations where you were blocked by another team and needed critical input?,hiring_manager,0.5867,medium
+How did you present technical outcomes to non-technical stakeholders effectively?,hiring_manager,0.5636,medium
+How do you handle situations where dependencies on other teams block your progress?,hiring_manager,0.5246,low
+Can you describe a situation where you collaborated with multiple cross-functional teams and how you ensured alignment and buy-in?,hiring_manager,0.5075,low
+"How would your colleagues describe your strengths in a team environment, particularly regarding communication and collaboration?",hiring_manager,0.5127,low
+"How do you approach understanding a new data environment, including schema discovery, data quality assessment, and stakeholder collaboration?",hiring_manager,0.5146,low
+Can you describe a time you worked with multiple teams across different domains and how you ensured alignment and collaboration?,hiring_manager,0.5458,low
+How do you handle situations where you are blocked by dependencies on other teams or delayed decisions?,hiring_manager,0.5277,low
+How do you prioritize tasks and communicate effectively with stakeholders when managing competing priorities?,hiring_manager,0.6254,medium
+How do you handle ambiguous requirements during project planning and requirement gathering?,hiring_manager,0.7324,medium
+How do you handle ambiguity in requirements gathering and ensure alignment with business stakeholders?,hiring_manager,0.5616,medium
+"What is your role within your team, and how do you collaborate with cross-functional stakeholders such as product, engineering, and business teams?",hiring_manager,0.5482,low
+How do you ensure alignment between technical solutions and business goals throughout a project lifecycle?,hiring_manager,0.602,medium
+How would you translate technical metrics like accuracy into business-relevant insights for stakeholders?,hiring_manager,0.5352,low
+"How do you manage team transitions, including geographic distribution and shifting responsibilities?",hiring_manager,0.5096,low
+"How would you approach a technical interview that combines coding, solution design, and stakeholder communication?",hiring_manager,0.5411,low
+"Tell me about a time you influenced your team’s technical direction, such as proposing MCP adoption, and how you built consensus.How were engineering work, sprint planning, priorities, and on-call responsibilities managed across multiple teams?",hiring_manager,0.514,low
+"How would your previous managers or teammates describe your working style, teamwork, and leadership qualities?",hiring_manager,0.6618,medium
+"What were the biggest technical challenges in the project, and how did you solve them?",hiring_manager,0.6267,medium
+How do you balance deep technical execution with customer-facing communication and stakeholder management?,hiring_manager,0.5708,medium
+What role did business requirements play in shaping your evaluation strategy and system improvements?,hiring_manager,0.5071,low
+How do you prioritize feature development for internal tools when different teams have conflicting needs?,hiring_manager,0.5484,low
+How do you identify and validate the true problem when working with non-technical stakeholders?,hiring_manager,0.6022,medium
+"In your previous role, were you operating as an individual contributor or in a leadership capacity, and what did that involve?",hiring_manager,0.5353,low
+"What type of technical leadership or people management experience do you have, if any?",hiring_manager,0.5252,low
+"What is your team structure, and how did you collaborate within your team?",hiring_manager,0.5587,medium
+"How do you handle low-performing team members, and what steps do you take before making a final decision?",hiring_manager,0.5587,medium
+How do you prioritize product thinking and business outcomes when building AI solutions?,hiring_manager,0.5167,low
+How would you communicate technical evaluation metrics to non-technical stakeholders in terms of business impact?,hiring_manager,0.5303,low
+How do you incorporate stakeholder feedback and business metrics into the evaluation and improvement of AI systems?,hiring_manager,0.5288,low
+How do you align engineering decisions with customer impact and business value when building AI products?,hiring_manager,0.5299,low
+Can you share an example of a conflict or challenge you faced while working in a team and how you resolved it?,hiring_manager,0.5562,medium
+How do you ensure effective communication and collaboration in environments where requirements are ambiguous or evolving?,hiring_manager,0.5373,low
+Can you describe a situation where you faced communication challenges within a team and how you resolved them?,hiring_manager,0.5555,medium
+What approach would you take to resolve interpersonal conflicts while maintaining professionalism and team productivity?,hiring_manager,0.604,medium
+"What is a project you are most proud of, and what impact did it have on users or business outcomes?",hiring_manager,0.7236,medium
+Can you describe the team structure you worked in and your specific responsibilities within a team of 7–8 members?,hiring_manager,0.5062,low
+What was your specific role and contribution in this project?,hiring_manager,0.5274,low
+"Can you describe a situation where you faced build or integration issues while working with other teams, and how you helped resolve them?",hiring_manager,0.5195,low
+"How do you collaborate with cross-functional teams to troubleshoot issues, and what communication strategies do you use to ensure alignment?",hiring_manager,0.5737,medium
+"What were the most challenging technical problems you faced in this project, and how did you address them?",hiring_manager,0.6319,medium
+"How did you handle technical disagreements with team members, such as the choice of VectorDB or testing strategies?",hiring_manager,0.5652,medium
+Can you discuss your experience with leadership responsibilities in previous roles and how you contributed to team or project direction?,hiring_manager,0.5387,low
+"Can you describe a challenging project you worked on and explain the problem, your approach, and the outcome?",hiring_manager,0.5296,low
+"What leadership responsibilities have you handled, including team management, project ownership, and stakeholder communication?",hiring_manager,0.6053,medium
+"What qualities do you believe are essential for success in this role, and how do you demonstrate them?",hiring_manager,0.5455,low
+Can you describe a situation where you faced a conflict within a team and how you resolved it?,hiring_manager,0.6497,medium
+How would you resolve conflicts with a team member while maintaining collaboration and productivity?,hiring_manager,0.6258,medium
+Can you describe a situation where you handled team conflict and how you approached resolving it?,hiring_manager,0.6686,medium
+Can you describe your project use case and the business problem it was solving?,hiring_manager,0.5356,low
+"What motivates you in your work, and how do your values influence your collaboration and leadership style?",hiring_manager,0.5644,medium
+"Describe the type of team environment you thrive in and how you take ownership and accountability in collaborative settings.Why are you interested in this role, and how does it align with your technical experience and career goals?",hiring_manager,0.5053,low
+"What was the most significant technical challenge you faced in your RAG system, and how did you address it?",hiring_manager,0.5171,low
+How do you ensure your communication pace and clarity are appropriate during interviews or stakeholder discussions?,hiring_manager,0.5495,low
+How would you describe your ideal team and hiring manager?,hiring_manager,0.5425,low
+"Can you describe a project you are particularly proud of, including the business problem, technical design, and impact delivered?",hiring_manager,0.6628,medium
+"What qualities define an ideal candidate for this role, and how do you evaluate technical disagreements within a team?",hiring_manager,0.6422,medium
+Can you provide an example of a complex problem you solved from scratch in your projects?,hiring_manager,0.5192,low
+Describe a challenging technical concept you struggled with initially and how you improved over time.,hiring_manager,0.6029,medium
+"Explain your approach to presenting past technical work to stakeholders, including how you communicate impact and technical decisions.How do you prioritize and manage work in a fast-paced, autonomous startup environment?",hiring_manager,0.5452,low
+"Explain your approach to collaborating with cross-functional teams, including data scientists, product managers, and engineers.Describe a challenging problem you solved while building a reusable AI framework, including how you balanced generalization and data security.How do you handle conflicts within a team, and what strategies do you use to resolve disagreements effectively?",hiring_manager,0.5158,low
+What is your approach to balancing technical growth and business impact when choosing your next role?,hiring_manager,0.6147,medium

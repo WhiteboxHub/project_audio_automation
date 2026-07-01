@@ -1,0 +1,18 @@
+question_text,category,score,confidence
+What are some other projects you worked on before your most recent company?,ambiguous_behavioral,0.5128,ambiguous
+"Tell us about one of your recent projects that you've been working on, including your role, the use case, your responsibility, and for how long you've been doing it.",ambiguous_behavioral,0.542,ambiguous
+Provide a brief background on yourself and deep dive into some projects.,ambiguous_behavioral,0.4937,ambiguous
+"Can you tell me a bit about yourself, the previous project that you have done and the technologies current that you are aware of?",ambiguous_behavioral,0.5501,ambiguous
+Tell me like about your experience on your previous project.,ambiguous_behavioral,0.5069,ambiguous
+"What are your biggest motivators, and what are you seeking in your next role?",ambiguous_behavioral,0.4966,ambiguous
+"What questions do you have about the role, team structure, and interview process?",ambiguous_behavioral,0.4822,ambiguous
+"How do you evaluate the performance of a RAG system across retrieval and generation stages, and what metrics and frameworks do you use?",ambiguous_engineering,0.5598,ambiguous
+"How do you choose an appropriate vector database for a RAG system, and what factors influence that decision?",ambiguous_engineering,0.4995,ambiguous
+"How would you troubleshoot a RAG system to determine whether issues arise from retrieval, generation, or preprocessing?",ambiguous_engineering,0.4958,ambiguous
+"What are you looking for in your next role, and how do you evaluate opportunities in terms of technical challenges, growth, and impact?",ambiguous_behavioral,0.5299,ambiguous
+"What challenges did you face in improving retrieval quality in a RAG system, and how did you address them?",ambiguous_engineering,0.5244,ambiguous
+"How do you handle data ingestion, preprocessing, chunking, embedding generation, and storage in a vector database for a RAG system?",ambiguous_engineering,0.4968,ambiguous
+"Which embedding models and vector databases did you use, and how did they contribute to improving retrieval quality?",ambiguous_engineering,0.5016,ambiguous
+"What challenges did you face while optimizing retrieval in RAG systems, and how did you address them?",ambiguous_engineering,0.5262,ambiguous
+How do you manage and structure knowledge bases for RAG systems to ensure effective retrieval and response quality?,ambiguous_engineering,0.5007,ambiguous
+"What are you looking for in your next role in terms of technical growth, domain exposure, and team collaboration?",ambiguous_behavioral,0.5103,ambiguous
