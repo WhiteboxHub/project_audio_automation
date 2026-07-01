@@ -99,7 +99,7 @@ this is the colab template used for the drive files ownership migration and the 
 this need to be added in colab secrets
 
 rename_drive_files.py
-this pull the links of drive files video,transcript,audio files and renames it with a proper naming convention
+this pull the links of drive files video,transcript,audio files and renames it with a proper naming convention on main company drive interview files
 ex: id_name_company_type_date
 - token_full_drive.json
 
@@ -107,4 +107,7 @@ send_missing_records_report.py
 this is to pull the records and send the missing records based on the currrent day,last 7 days,last 30 days
 - this uses .env
 
-
+- sync_meet_recording&notes.py
+this is created for syncig the recordingsand doc files from the jatin@whitebox-learning.com gmail this is cretaed to automate the records files when the meet is started from the inetrview table
+this uses 
+ token_gmail.json
