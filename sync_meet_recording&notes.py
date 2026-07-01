@@ -210,18 +210,25 @@ def main():
         if not meet_id:
             continue
             
-        # The Gemini email DOES NOT contain the Meet ID! It only contains the Candidate Name.
-        # We use the Meet ID to verify the row, but we MUST search Gmail using the Candidate Name.
+        # The Gemini email contains the full metadata string (base_name) in the subject.
         candidate = row.get('candidate', {})
         candidate_name = str(candidate.get('full_name', '')).strip()
         
         if not candidate_name:
             continue
             
-        print(f"\n🔍 Found candidate row {row_id} with missing links (Meet ID: {meet_id}).")
-        print(f"   Searching Gmail for candidate name: {candidate_name}")
+        interview_id = str(row.get('id', ''))
+        interview_type = str(row.get('type_of_interview', 'Unknown'))
+        company_name = str(row.get('company', 'Unknown'))
+        mode_of_interview = str(row.get('mode_of_interview', 'Unknown'))
         
-        video_url, docs_url = search_gmail_for_recap(gmail_service, candidate_name)
+        # Build the metadata string exactly as it appears in the email subject
+        base_name = f"{interview_id}_{candidate_name}_{interview_type}_{company_name}_{interview_date}_{mode_of_interview}"
+            
+        print(f"\n🔍 Found candidate row {row_id} with missing links (Meet ID: {meet_id}).")
+        print(f"   Searching Gmail for metadata string: {base_name}")
+        
+        video_url, docs_url = search_gmail_for_recap(gmail_service, base_name)
         
         if video_url or docs_url:
             update_payload = {}
